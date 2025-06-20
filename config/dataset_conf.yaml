@@ -1,0 +1,3 @@
+sonyc:
+  annotations: /media/tianzichen/ElementsSE/SoundDatasets/SONYC-UST/annotations.csv
+  taxonomy: /media/tianzichen/ElementsSE/SoundDatasets/SONYC-UST/dcase-ust-taxonomy.yaml

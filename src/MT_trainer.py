@@ -13,7 +13,7 @@ import torchaudio
 
 torchaudio.set_audio_backend("sox_io")
 from torchaudio.transforms import AmplitudeToDB, MelSpectrogram
-from processing.data_aug import mixup, add_noise
+from processing.data_aug import mixup, add_noise, filt_aug, frame_shift
 from utils.scaler import TorchScaler
 import warnings
 from utils.utils import batched_decode_preds, log_sedeval_metrics, focal_loss
@@ -23,7 +23,7 @@ from utils.evaluation_measures import (
 )
 import speechbrain as sb
 
-
+# add fliteraugmet in may.21 2025
 class CoSMo_benchmark(pl.LightningModule):
     """Pytorch lightning module for the SED 2021 baseline
     Args:
@@ -55,6 +55,7 @@ class CoSMo_benchmark(pl.LightningModule):
         fast_dev_run=False,
         evaluation=False,
         noisy=False,
+        filter_aug=False,
         precision=32,
     ):
         super().__init__()
@@ -71,6 +72,7 @@ class CoSMo_benchmark(pl.LightningModule):
         self.fast_dev_run = fast_dev_run
         self.evaluation = evaluation
         self.noisy = noisy
+        self.filter_aug = filter_aug
         self.precision = precision
 
         if self.fast_dev_run:
@@ -79,6 +81,8 @@ class CoSMo_benchmark(pl.LightningModule):
             self.num_workers = self.hparams["training"]["num_workers"]
 
         feat_params = self.hparams["features"]
+
+        filter_aug_params = self.hparams["transform"]
 
         # Mel spectrogram transform
         self.mel_spec = MelSpectrogram(
@@ -98,7 +102,7 @@ class CoSMo_benchmark(pl.LightningModule):
             mel_scale="htk",
         )
 
-        # Frequency Masking as in SpecAugment
+        # Frequency Masking as in SpecAugment, 48 fo prev crnn
         self.frequency_masking = torchaudio.transforms.FrequencyMasking(freq_mask_param=48)
 
         # Per-Channel Energy Normalization
@@ -117,7 +121,8 @@ class CoSMo_benchmark(pl.LightningModule):
         )
 
         # If we learn the pcen parameters, we add them to the optimizer
-        if feat_params["pcen_trainable"]:
+        # 2025-06-12 there's no optimizer during load_from_checkpoint process.
+        if feat_params["pcen_trainable"] and self.opt is not None :
             self.opt.add_param_group({"params": list(self.pcen.parameters())})
 
         # We detach the teacher model parameters of the graph
@@ -308,6 +313,8 @@ class CoSMo_benchmark(pl.LightningModule):
 
         audio, labels, filenames = batch
         idx_SGP, idx_SONYC, idx_unlab_SGP = self.hparams["training"]["batch_size"]
+        filter_aug_params = self.hparams["transform"]
+        db_range, n_band, min_bw, filt_type = filter_aug_params["filter_db_range"], filter_aug_params["filter_bands"], filter_aug_params["filter_minimum_bandwidth"], filter_aug_params["filter_type"]
 
         n_batch = audio.shape[0]
         # deriving masks for each dataset
@@ -343,10 +350,13 @@ class CoSMo_benchmark(pl.LightningModule):
         labels_weak_SGP = labels_weak[mask_SGP]
         labels_strong_SGP = labels[mask_SGP]
 
-        if self.noisy:
+        # Apply filter augment and add-noise
+        if self.noisy or self.filter_aug:
             mels_stud = torch.clone(mels).detach()
-
-            mels_stud[mask_unlab_SGP] = add_noise(mels_stud[mask_unlab_SGP])
+            if self.filter_aug:
+                mels_stud[mask_unlab_SGP] = filt_aug(mels_stud[mask_unlab_SGP], db_range=db_range, n_band=n_band, min_bw=min_bw, filter_type=filt_type)
+            if self.noisy:
+                mels_stud[mask_unlab_SGP] = add_noise(mels_stud[mask_unlab_SGP])
 
             # sed student forward
             strong_preds_student, weak_preds_student = self.detect(mels_stud, self.sed_student)
@@ -368,6 +378,8 @@ class CoSMo_benchmark(pl.LightningModule):
         )
 
         with torch.no_grad():
+            if self.filter_aug:
+                mels[mask_unlab_SGP] = filt_aug(mels[mask_unlab_SGP], db_range=db_range, n_band=n_band, min_bw=min_bw, filter_type=filt_type)
             if self.noisy:
                 mels[mask_unlab_SGP] = add_noise(mels[mask_unlab_SGP])
 
@@ -470,14 +482,17 @@ class CoSMo_benchmark(pl.LightningModule):
 
         # we derive masks for each dataset based on filenames
         mask_SONYC = (
-            torch.tensor([x[0] != "[" for x in filenames], device=self.device).detach().bool()
+            torch.tensor([len(x) <= 40 for x in filenames], device=self.device).detach().bool()
         )
         mask_SGP = (
-            torch.tensor([x[0] == "[" for x in filenames], device=self.device).detach().bool()
+            torch.tensor([len(x) > 40 for x in filenames], device=self.device).detach().bool()
         )
         # no unlabeled example but mask needed as an input for the scaler
         mask_unlab = torch.zeros(mask_SGP.shape, device=self.device).bool()
         masks = [mask_SGP, mask_SONYC, mask_unlab]
+        # sonyc_num = sum([1 for m in mask_SONYC if m])
+        # sgp_num = sum([1 for m in mask_SGP if m])
+        # print(f"val_step, SONYC_NUM: {sonyc_num}, SGP_NUM: {sgp_num}\n")
 
         # prediction for student
         mels = self.compute_features(audio, masks)
@@ -578,9 +593,9 @@ class CoSMo_benchmark(pl.LightningModule):
         labels_weak_far = torch.max(labels_far, -1)[0].float()
 
         # we derive masks for each dataset based on filenames
-        mask_SONYC = torch.tensor([x[0] != "[" for x in filenames], device=self.device).bool()
+        mask_SONYC = torch.tensor([len(x) <= 40 for x in filenames], device=self.device).bool()
         mask_SGP = (
-            torch.tensor([x[0] == "[" for x in filenames], device=self.device).detach().bool()
+            torch.tensor([len(x) > 40 for x in filenames], device=self.device).detach().bool()
         )
         # needed for scaler
         mask_unlab = torch.zeros(mask_SGP.shape, device=self.device).bool()
@@ -760,7 +775,7 @@ class CoSMo_benchmark(pl.LightningModule):
                 )
 
         if torch.any(mask_SGP):
-            filenames_strong = [x for x in filenames if x[0] == "["]
+            filenames_strong = [x for x in filenames if len(x) > 40]
 
             # compute psds
             decoded_student_strong = batched_decode_preds(
@@ -1175,7 +1190,7 @@ class CoSMo_benchmark(pl.LightningModule):
                             ignore_index=True,
                         )
 
-            filenames_strong = [x for x in filenames if x[0] == "["]
+            filenames_strong = [x for x in filenames if len(x) > 40]
 
             decoded_student_strong = batched_decode_preds(
                 strong_preds[mask_SGP],

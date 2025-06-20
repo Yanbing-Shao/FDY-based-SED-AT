@@ -1,0 +1,96 @@
+# sed.yaml (修改后)
+
+experiment_name: '[8, 16, 16]_loss_[0.9,0.1, 0]_log+pcen_FDCRNN_SONYC_strong'
+model_type: "FDCRNN"       # 指定使用FDCRNN模型
+training:
+  train_on_fine_taxo: False
+  # batch size: [SGP, SONYC, SGP_unlab]
+  batch_size: [8, 16, 16]  # 与FDCRNN配置对齐
+  batch_size_val: 128
+  weight_loss_sup: [0.9, 0.1, 0.0001] #[0, 1, 0] for system totally trained on SONYC [SGP_strong, SONYC_weak, SGP_weak]
+  scheduler_type : "none"
+  const_max: 2 # max weight used for sel0f supervised loss
+  n_epochs_warmup: 50        # 与FDCRNN config.yaml中的warmup对齐
+  n_epochs: 220              # 总训练轮数
+  num_workers: 4
+  early_stop_patience: 100
+  accumulate_batches: 1
+  gradient_clip: 0
+  median_window: 7
+  val_thresholds: [0.5]
+  n_test_thresholds: 50
+  ema_factor: 0.999
+  supervised_loss: focal
+  self_sup_loss: mse
+  backend: # pytorch lightning backend, ddp, dp or None
+  limit_train_batches: 539 # 142 prev - for 4435 SGP audio with bs = 32
+  validation_interval: 1 # perform validation every X epoch, 1 default
+  check_train_every_n_epochs: 0 # Evaluate classification metrics on the train set every n epochs, default 10
+  seed: 128
+  mixup: soft                # 与FDCRNN的mixup_type对齐
+  obj_metric_synth_type: detection
+  early_stopping: True
+scaler:
+  statistic: instance # instance or dataset-wide statistic
+  normtype: minmax # minmax or standard or mean normalization
+  dims: [1,2] # dimensions over which normalization is applied
+  savepath: ./scaler.ckpt # path to scaler checkpoint
+
+net:  # 修改CRNN配置为FDCRNN参数
+  n_class: 10
+  n_RNN_cell: 256            # BiGRU隐藏单元数
+  n_RNN_layer: 2             # RNN层数
+  attention: "class"         # 注意力类型
+  n_in_channel: 1              # 输入通道数
+  activation: "cg"           # 激活函数(Context Gating)
+  conv_dropout: 0.5
+  kernel: [3, 3, 3, 3, 3, 3, 3]
+  pad: [1, 1, 1, 1, 1, 1, 1]
+  stride: [1, 1, 1, 1, 1, 1, 1]
+  n_filt: [32, 64, 128, 256, 256, 256, 256]  # 卷积层通道数
+  pooling: [[2, 2], [2, 2], [1, 2], [1, 2], [1, 2], [1, 2], [1, 2]]
+  n_basis_kernels: 4         # 动态卷积基数量
+  DY_layers: [0, 1, 1, 1, 1, 1, 1]  # 动态卷积层标记
+  temperature: 31            # 注意力温度参数
+  pool_dim: "time"           # 池化维度配置
+  rec_dropout: 0
+  normalization: "group"
+
+features:
+  n_mels: 128
+  n_filters: 2048
+  hop_length: 512            # 与FDCRNN的hop_length=256不同，需调整
+  n_window: 2048
+  sample_rate: 32000         # 确保与数据预处理一致
+  f_min: 0
+  f_max: 16000
+  transform_type: log+pcen
+  pcen_trainable: False
+
+transform:
+  filter_db_range: [ -4.5, 6 ]       # db range of FilterAugment to be applied on each band
+  filter_bands: [ 2, 5 ]             # range of frequency band number in FilterAugment
+  filter_minimum_bandwidth: 4
+  filter_type: step
+
+data:
+  audio_max_len: 10
+  fs: 32000
+  net_subsample: 4
+  root_path: /home/tianzichen/SELDProjects/CoSMo/data/ # put the root path of the data folder here
+  hdf5_train: "train.h5"
+  hdf5_val: "val.h5"
+  hdf5_test: "test.h5"
+  sonyc_csv_train: "metadata/train/SONYC_train.csv"
+  sonyc_csv_val: "metadata/val/SONYC_val.csv"
+  sonyc_csv_test: "metadata/test/SONYC_test.csv"
+  raw_singa-pura_csv_root: "/home/tianzichen/sound_datasets/singapura/labels_public"
+  singa-pura_csv_train: "metadata/train/SINGA-PURA_train.csv"
+  singa-pura_csv_val: "metadata/val/SINGA-PURA_val.csv"
+  singa-pura_csv_test: "metadata/test/SINGA-PURA_test.csv"
+  singa-pura_csv_unlabelled: "metadata/train/SINGA-PURA_unlabelled.csv"
+  taxonomy_path: "/home/tianzichen/SELDProjects/CoSMo/config/taxonomy_SONYC.yaml"
+
+opt:
+  name: adam
+  lr: 0.001                  # 与FDCRNN config.yaml中的lr=0.001不同，可调整-调节为0.001

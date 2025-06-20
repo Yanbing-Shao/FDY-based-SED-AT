@@ -1,0 +1,947 @@
+for dump_raw_to_hdf
+/home/tianzichen/anaconda3/envs/CoSMo/bin/python ./src/processing/dump_raw_to_hdf.py ./data/metadata/train/SINGA-PURA_train.csv -o ./data/train.h5 -g SINGA-PURA -f /home/tianzichen/sound_datasets/singapura/labelled/
+
+/home/tianzichen/anaconda3/envs/CoSMo/bin/python ./src/processing/dump_raw_to_hdf.py ./data/metadata/train/SONYC_train.csv  -o ./data/train.h5 -g SONYC -f /media/tianzichen/ElementsSE/SoundDatasets/SONYC-UST/audio/
+
+>>> import multiprocessing as mp
+>>> mp.cpu_count()
+16
+xe
+发现新问题：
+dump_raw_to_hdf加载singa pura unlabelled数据集，加载到约47000条时出现Broken pipe error
+排除：
+1. 检查文件名对应的audio是否存在：检查完成，音频全部存在，且不存在超过10s长度的
+2.参数调整：mp-2,queues_size = 200 49209
+                          mp+ 1 queues_size=1000 49953
+
+
+
+Process ForkPoolWorker-13:
+Process ForkPoolWorker-3:
+Process ForkPoolWorker-7:
+Process ForkPoolWorker-10:
+Process ForkPoolWorker-9:
+Process ForkPoolWorker-5:
+Process ForkPoolWorker-6:
+Traceback (most recent call last):
+Traceback (most recent call last):
+Traceback (most recent call last):
+Traceback (most recent call last):
+Traceback (most recent call last):
+Traceback (most recent call last):
+Traceback (most recent call last):
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/pool.py", line 131, in worker
+    put((job, i, result))
+Traceback (most recent call last):
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/pool.py", line 131, in worker
+    put((job, i, result))
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/pool.py", line 131, in worker
+    put((job, i, result))
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/pool.py", line 131, in worker
+    put((job, i, result))
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/pool.py", line 131, in worker
+    put((job, i, result))
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/queues.py", line 368, in put
+    self._writer.send_bytes(obj)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/queues.py", line 368, in put
+    self._writer.send_bytes(obj)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/pool.py", line 131, in worker
+    put((job, i, result))
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/queues.py", line 368, in put
+    self._writer.send_bytes(obj)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/pool.py", line 131, in worker
+    put((job, i, result))
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/queues.py", line 368, in put
+    self._writer.send_bytes(obj)
+Process ForkPoolWorker-16:
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/queues.py", line 368, in put
+    self._writer.send_bytes(obj)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 200, in send_bytes
+    self._send_bytes(m[offset:offset + size])
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/queues.py", line 368, in put
+    self._writer.send_bytes(obj)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 200, in send_bytes
+    self._send_bytes(m[offset:offset + size])
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/pool.py", line 131, in worker
+    put((job, i, result))
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 200, in send_bytes
+    self._send_bytes(m[offset:offset + size])
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/queues.py", line 368, in put
+    self._writer.send_bytes(obj)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 200, in send_bytes
+    self._send_bytes(m[offset:offset + size])
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 200, in send_bytes
+    self._send_bytes(m[offset:offset + size])
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 404, in _send_bytes
+    self._send(header)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 200, in send_bytes
+    self._send_bytes(m[offset:offset + size])
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 404, in _send_bytes
+    self._send(header)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/queues.py", line 368, in put
+    self._writer.send_bytes(obj)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 405, in _send_bytes
+    self._send(buf)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 200, in send_bytes
+    self._send_bytes(m[offset:offset + size])
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 404, in _send_bytes
+    self._send(header)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 404, in _send_bytes
+    self._send(header)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 368, in _send
+    n = write(self._handle, buf)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 404, in _send_bytes
+    self._send(header)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 368, in _send
+    n = write(self._handle, buf)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 368, in _send
+    n = write(self._handle, buf)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 200, in send_bytes
+    self._send_bytes(m[offset:offset + size])
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 404, in _send_bytes
+    self._send(header)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 368, in _send
+    n = write(self._handle, buf)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 368, in _send
+    n = write(self._handle, buf)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 368, in _send
+    n = write(self._handle, buf)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 404, in _send_bytes
+    self._send(header)
+BrokenPipeError: [Errno 32] Broken pipe
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 368, in _send
+    n = write(self._handle, buf)
+BrokenPipeError: [Errno 32] Broken pipe
+BrokenPipeError: [Errno 32] Broken pipe
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 368, in _send
+    n = write(self._handle, buf)
+BrokenPipeError: [Errno 32] Broken pipe
+BrokenPipeError: [Errno 32] Broken pipe
+BrokenPipeError: [Errno 32] Broken pipe
+BrokenPipeError: [Errno 32] Broken pipe
+BrokenPipeError: [Errno 32] Broken pipe
+
+During handling of the above exception, another exception occurred:
+
+
+During handling of the above exception, another exception occurred:
+
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+Traceback (most recent call last):
+
+During handling of the above exception, another exception occurred:
+
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+Traceback (most recent call last):
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+Traceback (most recent call last):
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/pool.py", line 136, in worker
+    put((job, i, (False, wrapped)))
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/pool.py", line 136, in worker
+    put((job, i, (False, wrapped)))
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/pool.py", line 136, in worker
+    put((job, i, (False, wrapped)))
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/queues.py", line 368, in put
+    self._writer.send_bytes(obj)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/pool.py", line 136, in worker
+    put((job, i, (False, wrapped)))
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/queues.py", line 368, in put
+    self._writer.send_bytes(obj)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/queues.py", line 368, in put
+    self._writer.send_bytes(obj)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 200, in send_bytes
+    self._send_bytes(m[offset:offset + size])
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/queues.py", line 368, in put
+    self._writer.send_bytes(obj)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 200, in send_bytes
+    self._send_bytes(m[offset:offset + size])
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 200, in send_bytes
+    self._send_bytes(m[offset:offset + size])
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/pool.py", line 136, in worker
+    put((job, i, (False, wrapped)))
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 411, in _send_bytes
+    self._send(header + buf)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 200, in send_bytes
+    self._send_bytes(m[offset:offset + size])
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/pool.py", line 136, in worker
+    put((job, i, (False, wrapped)))
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 411, in _send_bytes
+    self._send(header + buf)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 411, in _send_bytes
+    self._send(header + buf)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/pool.py", line 136, in worker
+    put((job, i, (False, wrapped)))
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/pool.py", line 136, in worker
+    put((job, i, (False, wrapped)))
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 368, in _send
+    n = write(self._handle, buf)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/queues.py", line 368, in put
+    self._writer.send_bytes(obj)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 411, in _send_bytes
+    self._send(header + buf)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/queues.py", line 368, in put
+    self._writer.send_bytes(obj)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 368, in _send
+    n = write(self._handle, buf)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 368, in _send
+    n = write(self._handle, buf)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/queues.py", line 368, in put
+    self._writer.send_bytes(obj)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/queues.py", line 368, in put
+    self._writer.send_bytes(obj)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 200, in send_bytes
+    self._send_bytes(m[offset:offset + size])
+BrokenPipeError: [Errno 32] Broken pipe
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 200, in send_bytes
+    self._send_bytes(m[offset:offset + size])
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 368, in _send
+    n = write(self._handle, buf)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 200, in send_bytes
+    self._send_bytes(m[offset:offset + size])
+BrokenPipeError: [Errno 32] Broken pipe
+BrokenPipeError: [Errno 32] Broken pipe
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 200, in send_bytes
+    self._send_bytes(m[offset:offset + size])
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 411, in _send_bytes
+    self._send(header + buf)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 411, in _send_bytes
+    self._send(header + buf)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 411, in _send_bytes
+    self._send(header + buf)
+BrokenPipeError: [Errno 32] Broken pipe
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 411, in _send_bytes
+    self._send(header + buf)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 368, in _send
+    n = write(self._handle, buf)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 368, in _send
+    n = write(self._handle, buf)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 368, in _send
+    n = write(self._handle, buf)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 368, in _send
+    n = write(self._handle, buf)
+BrokenPipeError: [Errno 32] Broken pipe
+BrokenPipeError: [Errno 32] Broken pipe
+BrokenPipeError: [Errno 32] Broken pipe
+BrokenPipeError: [Errno 32] Broken pipe
+Traceback (most recent call last):
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/pool.py", line 131, in worker
+    put((job, i, result))
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/queues.py", line 368, in put
+    self._writer.send_bytes(obj)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 200, in send_bytes
+    self._send_bytes(m[offset:offset + size])
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 404, in _send_bytes
+    self._send(header)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 368, in _send
+    n = write(self._handle, buf)
+BrokenPipeError: [Errno 32] Broken pipe
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/pool.py", line 136, in worker
+    put((job, i, (False, wrapped)))
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/queues.py", line 368, in put
+    self._writer.send_bytes(obj)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 200, in send_bytes
+    self._send_bytes(m[offset:offset + size])
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 411, in _send_bytes
+    self._send(header + buf)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 368, in _send
+    n = write(self._handle, buf)
+BrokenPipeError: [Errno 32] Broken pipe
+Process ForkPoolWorker-14:
+Process ForkPoolWorker-17:
+Process ForkPoolWorker-15:
+Traceback (most recent call last):
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/pool.py", line 131, in worker
+    put((job, i, result))
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/queues.py", line 368, in put
+    self._writer.send_bytes(obj)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 200, in send_bytes
+    self._send_bytes(m[offset:offset + size])
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 404, in _send_bytes
+    self._send(header)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 368, in _send
+    n = write(self._handle, buf)
+BrokenPipeError: [Errno 32] Broken pipe
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/pool.py", line 136, in worker
+    put((job, i, (False, wrapped)))
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/queues.py", line 368, in put
+    self._writer.send_bytes(obj)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 200, in send_bytes
+    self._send_bytes(m[offset:offset + size])
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 411, in _send_bytes
+    self._send(header + buf)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 368, in _send
+    n = write(self._handle, buf)
+BrokenPipeError: [Errno 32] Broken pipe
+Traceback (most recent call last):
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/pool.py", line 131, in worker
+    put((job, i, result))
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/queues.py", line 368, in put
+    self._writer.send_bytes(obj)
+Traceback (most recent call last):
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 200, in send_bytes
+    self._send_bytes(m[offset:offset + size])
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 404, in _send_bytes
+    self._send(header)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 368, in _send
+    n = write(self._handle, buf)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/pool.py", line 131, in worker
+    put((job, i, result))
+BrokenPipeError: [Errno 32] Broken pipe
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/queues.py", line 368, in put
+    self._writer.send_bytes(obj)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 200, in send_bytes
+    self._send_bytes(m[offset:offset + size])
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 404, in _send_bytes
+    self._send(header)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 368, in _send
+    n = write(self._handle, buf)
+
+During handling of the above exception, another exception occurred:
+
+BrokenPipeError: [Errno 32] Broken pipe
+Traceback (most recent call last):
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+
+During handling of the above exception, another exception occurred:
+
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/pool.py", line 136, in worker
+    put((job, i, (False, wrapped)))
+Traceback (most recent call last):
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/queues.py", line 368, in put
+    self._writer.send_bytes(obj)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 200, in send_bytes
+    self._send_bytes(m[offset:offset + size])
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 411, in _send_bytes
+    self._send(header + buf)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 368, in _send
+    n = write(self._handle, buf)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+BrokenPipeError: [Errno 32] Broken pipe
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/pool.py", line 136, in worker
+    put((job, i, (False, wrapped)))
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/queues.py", line 368, in put
+    self._writer.send_bytes(obj)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 200, in send_bytes
+    self._send_bytes(m[offset:offset + size])
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 411, in _send_bytes
+    self._send(header + buf)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 368, in _send
+    n = write(self._handle, buf)
+BrokenPipeError: [Errno 32] Broken pipe
+Process ForkPoolWorker-8:
+Traceback (most recent call last):
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/pool.py", line 131, in worker
+    put((job, i, result))
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/queues.py", line 368, in put
+    self._writer.send_bytes(obj)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 200, in send_bytes
+    self._send_bytes(m[offset:offset + size])
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 404, in _send_bytes
+    self._send(header)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 368, in _send
+    n = write(self._handle, buf)
+BrokenPipeError: [Errno 32] Broken pipe
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/pool.py", line 136, in worker
+    put((job, i, (False, wrapped)))
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/queues.py", line 368, in put
+    self._writer.send_bytes(obj)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 200, in send_bytes
+    self._send_bytes(m[offset:offset + size])
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 411, in _send_bytes
+    self._send(header + buf)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 368, in _send
+    n = write(self._handle, buf)
+BrokenPipeError: [Errno 32] Broken pipe
+Process ForkPoolWorker-12:
+Traceback (most recent call last):
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/pool.py", line 131, in worker
+    put((job, i, result))
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/queues.py", line 368, in put
+    self._writer.send_bytes(obj)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 200, in send_bytes
+    self._send_bytes(m[offset:offset + size])
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 404, in _send_bytes
+    self._send(header)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 368, in _send
+    n = write(self._handle, buf)
+BrokenPipeError: [Errno 32] Broken pipe
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/pool.py", line 136, in worker
+    put((job, i, (False, wrapped)))
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/queues.py", line 368, in put
+    self._writer.send_bytes(obj)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 200, in send_bytes
+    self._send_bytes(m[offset:offset + size])
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 411, in _send_bytes
+    self._send(header + buf)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 368, in _send
+    n = write(self._handle, buf)
+BrokenPipeError: [Errno 32] Broken pipe
+Process ForkPoolWorker-4:
+Traceback (most recent call last):
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/pool.py", line 131, in worker
+    put((job, i, result))
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/queues.py", line 368, in put
+    self._writer.send_bytes(obj)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 200, in send_bytes
+    self._send_bytes(m[offset:offset + size])
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 404, in _send_bytes
+    self._send(header)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 368, in _send
+    n = write(self._handle, buf)
+BrokenPipeError: [Errno 32] Broken pipe
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/pool.py", line 136, in worker
+    put((job, i, (False, wrapped)))
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/queues.py", line 368, in put
+    self._writer.send_bytes(obj)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 200, in send_bytes
+    self._send_bytes(m[offset:offset + size])
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 411, in _send_bytes
+    self._send(header + buf)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 368, in _send
+    n = write(self._handle, buf)
+BrokenPipeError: [Errno 32] Broken pipe
+
+
+
+Process ForkPoolWorker-16:
+Process ForkPoolWorker-3:
+Process ForkPoolWorker-12:
+Process ForkPoolWorker-9:
+Process ForkPoolWorker-6:
+Process ForkPoolWorker-15:
+Process ForkPoolWorker-8:
+Process ForkPoolWorker-14:
+Process ForkPoolWorker-7:
+Traceback (most recent call last):
+Traceback (most recent call last):
+Traceback (most recent call last):
+Traceback (most recent call last):
+Traceback (most recent call last):
+Traceback (most recent call last):
+Traceback (most recent call last):
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/pool.py", line 131, in worker
+    put((job, i, result))
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/pool.py", line 131, in worker
+    put((job, i, result))
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/pool.py", line 131, in worker
+    put((job, i, result))
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/queues.py", line 368, in put
+    self._writer.send_bytes(obj)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/pool.py", line 131, in worker
+    put((job, i, result))
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/queues.py", line 368, in put
+    self._writer.send_bytes(obj)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/queues.py", line 368, in put
+    self._writer.send_bytes(obj)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/pool.py", line 131, in worker
+    put((job, i, result))
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/pool.py", line 131, in worker
+    put((job, i, result))
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 200, in send_bytes
+    self._send_bytes(m[offset:offset + size])
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/pool.py", line 131, in worker
+    put((job, i, result))
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/queues.py", line 368, in put
+    self._writer.send_bytes(obj)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 200, in send_bytes
+    self._send_bytes(m[offset:offset + size])
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 200, in send_bytes
+    self._send_bytes(m[offset:offset + size])
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/queues.py", line 368, in put
+    self._writer.send_bytes(obj)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/queues.py", line 368, in put
+    self._writer.send_bytes(obj)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 404, in _send_bytes
+    self._send(header)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 200, in send_bytes
+    self._send_bytes(m[offset:offset + size])
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/queues.py", line 368, in put
+    self._writer.send_bytes(obj)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 404, in _send_bytes
+    self._send(header)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 404, in _send_bytes
+    self._send(header)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 368, in _send
+    n = write(self._handle, buf)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 200, in send_bytes
+    self._send_bytes(m[offset:offset + size])
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 200, in send_bytes
+    self._send_bytes(m[offset:offset + size])
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 404, in _send_bytes
+    self._send(header)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 368, in _send
+    n = write(self._handle, buf)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 368, in _send
+    n = write(self._handle, buf)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 200, in send_bytes
+    self._send_bytes(m[offset:offset + size])
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 404, in _send_bytes
+    self._send(header)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 404, in _send_bytes
+    self._send(header)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 368, in _send
+    n = write(self._handle, buf)
+BrokenPipeError: [Errno 32] Broken pipe
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 404, in _send_bytes
+    self._send(header)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 368, in _send
+    n = write(self._handle, buf)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 368, in _send
+    n = write(self._handle, buf)
+BrokenPipeError: [Errno 32] Broken pipe
+BrokenPipeError: [Errno 32] Broken pipe
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 368, in _send
+    n = write(self._handle, buf)
+BrokenPipeError: [Errno 32] Broken pipe
+BrokenPipeError: [Errno 32] Broken pipe
+BrokenPipeError: [Errno 32] Broken pipe
+BrokenPipeError: [Errno 32] Broken pipe
+
+During handling of the above exception, another exception occurred:
+
+
+During handling of the above exception, another exception occurred:
+
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+Traceback (most recent call last):
+
+During handling of the above exception, another exception occurred:
+
+
+During handling of the above exception, another exception occurred:
+
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+Traceback (most recent call last):
+Traceback (most recent call last):
+Traceback (most recent call last):
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/pool.py", line 136, in worker
+    put((job, i, (False, wrapped)))
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/pool.py", line 136, in worker
+    put((job, i, (False, wrapped)))
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/queues.py", line 368, in put
+    self._writer.send_bytes(obj)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/pool.py", line 136, in worker
+    put((job, i, (False, wrapped)))
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 200, in send_bytes
+    self._send_bytes(m[offset:offset + size])
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/queues.py", line 368, in put
+    self._writer.send_bytes(obj)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/pool.py", line 136, in worker
+    put((job, i, (False, wrapped)))
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/pool.py", line 136, in worker
+    put((job, i, (False, wrapped)))
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/queues.py", line 368, in put
+    self._writer.send_bytes(obj)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 411, in _send_bytes
+    self._send(header + buf)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/queues.py", line 368, in put
+    self._writer.send_bytes(obj)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 200, in send_bytes
+    self._send_bytes(m[offset:offset + size])
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/pool.py", line 136, in worker
+    put((job, i, (False, wrapped)))
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/queues.py", line 368, in put
+    self._writer.send_bytes(obj)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 200, in send_bytes
+    self._send_bytes(m[offset:offset + size])
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 411, in _send_bytes
+    self._send(header + buf)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 368, in _send
+    n = write(self._handle, buf)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 200, in send_bytes
+    self._send_bytes(m[offset:offset + size])
+Traceback (most recent call last):
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/pool.py", line 136, in worker
+    put((job, i, (False, wrapped)))
+Traceback (most recent call last):
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/queues.py", line 368, in put
+    self._writer.send_bytes(obj)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 200, in send_bytes
+    self._send_bytes(m[offset:offset + size])
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 411, in _send_bytes
+    self._send(header + buf)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 368, in _send
+    n = write(self._handle, buf)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 411, in _send_bytes
+    self._send(header + buf)
+BrokenPipeError: [Errno 32] Broken pipe
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/queues.py", line 368, in put
+    self._writer.send_bytes(obj)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 200, in send_bytes
+    self._send_bytes(m[offset:offset + size])
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 411, in _send_bytes
+    self._send(header + buf)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 368, in _send
+    n = write(self._handle, buf)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 368, in _send
+    n = write(self._handle, buf)
+BrokenPipeError: [Errno 32] Broken pipe
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/pool.py", line 131, in worker
+    put((job, i, result))
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 200, in send_bytes
+    self._send_bytes(m[offset:offset + size])
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 411, in _send_bytes
+    self._send(header + buf)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 368, in _send
+    n = write(self._handle, buf)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/pool.py", line 131, in worker
+    put((job, i, result))
+BrokenPipeError: [Errno 32] Broken pipe
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/queues.py", line 368, in put
+    self._writer.send_bytes(obj)
+BrokenPipeError: [Errno 32] Broken pipe
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 411, in _send_bytes
+    self._send(header + buf)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 368, in _send
+    n = write(self._handle, buf)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/queues.py", line 368, in put
+    self._writer.send_bytes(obj)
+BrokenPipeError: [Errno 32] Broken pipe
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 200, in send_bytes
+    self._send_bytes(m[offset:offset + size])
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 368, in _send
+    n = write(self._handle, buf)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 200, in send_bytes
+    self._send_bytes(m[offset:offset + size])
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 404, in _send_bytes
+    self._send(header)
+BrokenPipeError: [Errno 32] Broken pipe
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 405, in _send_bytes
+    self._send(buf)
+BrokenPipeError: [Errno 32] Broken pipe
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 368, in _send
+    n = write(self._handle, buf)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 368, in _send
+    n = write(self._handle, buf)
+BrokenPipeError: [Errno 32] Broken pipe
+BrokenPipeError: [Errno 32] Broken pipe
+Traceback (most recent call last):
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/pool.py", line 131, in worker
+    put((job, i, result))
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/queues.py", line 368, in put
+    self._writer.send_bytes(obj)
+
+During handling of the above exception, another exception occurred:
+
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 200, in send_bytes
+    self._send_bytes(m[offset:offset + size])
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 404, in _send_bytes
+    self._send(header)
+Traceback (most recent call last):
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 368, in _send
+    n = write(self._handle, buf)
+BrokenPipeError: [Errno 32] Broken pipe
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/pool.py", line 136, in worker
+    put((job, i, (False, wrapped)))
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/pool.py", line 136, in worker
+    put((job, i, (False, wrapped)))
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/queues.py", line 368, in put
+    self._writer.send_bytes(obj)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/queues.py", line 368, in put
+    self._writer.send_bytes(obj)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 200, in send_bytes
+    self._send_bytes(m[offset:offset + size])
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 200, in send_bytes
+    self._send_bytes(m[offset:offset + size])
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 411, in _send_bytes
+    self._send(header + buf)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 411, in _send_bytes
+    self._send(header + buf)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 368, in _send
+    n = write(self._handle, buf)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 368, in _send
+    n = write(self._handle, buf)
+
+During handling of the above exception, another exception occurred:
+
+BrokenPipeError: [Errno 32] Broken pipe
+BrokenPipeError: [Errno 32] Broken pipe
+Traceback (most recent call last):
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/pool.py", line 136, in worker
+    put((job, i, (False, wrapped)))
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/queues.py", line 368, in put
+    self._writer.send_bytes(obj)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 200, in send_bytes
+    self._send_bytes(m[offset:offset + size])
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 411, in _send_bytes
+    self._send(header + buf)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 368, in _send
+    n = write(self._handle, buf)
+BrokenPipeError: [Errno 32] Broken pipe
+Process ForkPoolWorker-10:
+Process ForkPoolWorker-4:
+Process ForkPoolWorker-13:
+Process ForkPoolWorker-5:
+Traceback (most recent call last):
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/pool.py", line 131, in worker
+    put((job, i, result))
+Traceback (most recent call last):
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/queues.py", line 368, in put
+    self._writer.send_bytes(obj)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 200, in send_bytes
+    self._send_bytes(m[offset:offset + size])
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/pool.py", line 131, in worker
+    put((job, i, result))
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 404, in _send_bytes
+    self._send(header)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/queues.py", line 368, in put
+    self._writer.send_bytes(obj)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 368, in _send
+    n = write(self._handle, buf)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 200, in send_bytes
+    self._send_bytes(m[offset:offset + size])
+Traceback (most recent call last):
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 404, in _send_bytes
+    self._send(header)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 368, in _send
+    n = write(self._handle, buf)
+BrokenPipeError: [Errno 32] Broken pipe
+Traceback (most recent call last):
+BrokenPipeError: [Errno 32] Broken pipe
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/pool.py", line 131, in worker
+    put((job, i, result))
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/queues.py", line 368, in put
+    self._writer.send_bytes(obj)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 200, in send_bytes
+    self._send_bytes(m[offset:offset + size])
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/pool.py", line 131, in worker
+    put((job, i, result))
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 404, in _send_bytes
+    self._send(header)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 368, in _send
+    n = write(self._handle, buf)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/queues.py", line 368, in put
+    self._writer.send_bytes(obj)
+BrokenPipeError: [Errno 32] Broken pipe
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 200, in send_bytes
+    self._send_bytes(m[offset:offset + size])
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 404, in _send_bytes
+    self._send(header)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 368, in _send
+    n = write(self._handle, buf)
+
+During handling of the above exception, another exception occurred:
+
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+BrokenPipeError: [Errno 32] Broken pipe
+Traceback (most recent call last):
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/pool.py", line 136, in worker
+    put((job, i, (False, wrapped)))
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/queues.py", line 368, in put
+    self._writer.send_bytes(obj)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/pool.py", line 136, in worker
+    put((job, i, (False, wrapped)))
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 200, in send_bytes
+    self._send_bytes(m[offset:offset + size])
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/queues.py", line 368, in put
+    self._writer.send_bytes(obj)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 200, in send_bytes
+    self._send_bytes(m[offset:offset + size])
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 411, in _send_bytes
+    self._send(header + buf)
+
+During handling of the above exception, another exception occurred:
+
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 411, in _send_bytes
+    self._send(header + buf)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 368, in _send
+    n = write(self._handle, buf)
+Traceback (most recent call last):
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 368, in _send
+    n = write(self._handle, buf)
+BrokenPipeError: [Errno 32] Broken pipe
+BrokenPipeError: [Errno 32] Broken pipe
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+
+During handling of the above exception, another exception occurred:
+
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/pool.py", line 136, in worker
+    put((job, i, (False, wrapped)))
+Traceback (most recent call last):
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/queues.py", line 368, in put
+    self._writer.send_bytes(obj)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 200, in send_bytes
+    self._send_bytes(m[offset:offset + size])
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 411, in _send_bytes
+    self._send(header + buf)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 368, in _send
+    n = write(self._handle, buf)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/process.py", line 315, in _bootstrap
+    self.run()
+BrokenPipeError: [Errno 32] Broken pipe
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/pool.py", line 136, in worker
+    put((job, i, (False, wrapped)))
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/queues.py", line 368, in put
+    self._writer.send_bytes(obj)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 200, in send_bytes
+    self._send_bytes(m[offset:offset + size])
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 411, in _send_bytes
+    self._send(header + buf)
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/multiprocessing/connection.py", line 368, in _send
+    n = write(self._handle, buf)
+BrokenPipeError: [Errno 32] Broken pipe

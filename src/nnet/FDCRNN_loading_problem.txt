@@ -1,0 +1,15 @@
+
+  File "/home/tianzichen/anaconda3/envs/CoSMo/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1501, in _call_impl
+    return forward_call(*args, **kwargs)
+           │             │       └ {'return_logits': False}
+           │             └ (tensor([[[[-1.4274e+00, -1.9370e+00, -2.1676e+00,  ..., -1.8287e+00,
+           │                           2.7290e-01, -1.0560e+00],
+           │                         [-6.816...
+           └ <bound method FDCRNN.forward of FDCRNN(
+               (cnn): CNN(
+                 (cnn): Sequential(
+                   (conv0): Conv2d(2, 32, kernel_size=(3, 3),...
+
+TypeError: forward() got an unexpected keyword argument 'return_logits'
+
+缺失参数pad_mask/return_logits

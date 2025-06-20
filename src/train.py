@@ -12,6 +12,7 @@ from pytorch_lightning.loggers import TensorBoardLogger
 from processing.sampler import ConcatDatasetBatchSampler
 from processing.datasets import HDF5_dataset, ConcatDatasetUrban
 from nnet.CRNN import CRNN
+from nnet.FDCRNN import FDCRNN
 from utils.encoder import ManyHotEncoder
 from utils.schedulers import ExponentialWarmup
 from MT_trainer import CoSMo_benchmark
@@ -28,6 +29,7 @@ def single_run(
     fast_dev_run=False,
     evaluation=False,
     noisy=False,
+    filter_aug=False
 ):
     """
     Running sound event detection baseline
@@ -58,13 +60,20 @@ def single_run(
     config["net"].update({"n_class": len(encoder.labels)})
     config.update({"taxonomy": encoder.taxonomy["name"]})
     config.update({"noisy": noisy})
+    config.update({"filter_aug":filter_aug})
     config["training"].update({"scheduler_type": "none"})
 
     if config["features"]["transform_type"] == "log+pcen":
         config["net"].update({"n_in_channel": 2})
 
     ##### model definition  ############
-    sed_student = CRNN(**config["net"])
+    if config["model_type"] == "CRNN":
+        sed_student = CRNN(**config["net"])
+    elif config["model_type"] == "FDCRNN":
+        sed_student = FDCRNN(**config["net"])
+    else:
+        print(f"No model exists, check config")
+
 
     if test_state_dict is None:
         ##### data prep train valid ##########
@@ -122,6 +131,7 @@ def single_run(
             encoder,
             [config["training"]["batch_size_val"]],
         )
+        assert len(valid_dataset) > 0
 
         test_dataset = ConcatDatasetUrban(
             [SINGAPURA_test_set, SONYC_test_set],
@@ -129,6 +139,7 @@ def single_run(
             [config["training"]["batch_size_val"]],
             analyse_proximity=True,
         )
+        assert len(test_dataset) > 0
 
         ##### training params and optimizers ############
         epoch_len = min(
@@ -191,21 +202,32 @@ def single_run(
             ),
         ],
         """
-        callbacks = [
-            EarlyStopping(
-                monitor="Val/obj_metric",
-                patience=config["training"]["early_stop_patience"],
-                verbose=True,
-                mode="max",
-            ),
-            ModelCheckpoint(
-                logger.log_dir,
-                monitor="Val/obj_metric",
-                save_top_k=1,
-                mode="max",
-                save_last=True,
-            ),
-        ]
+        if config["training"]["early_stopping"]:
+            callbacks = [
+                EarlyStopping(
+                    monitor="Val/obj_metric",
+                    patience=config["training"]["early_stop_patience"],
+                    verbose=True,
+                    mode="max",
+                ),
+                ModelCheckpoint(
+                    logger.log_dir,
+                    monitor="Val/obj_metric",
+                    save_top_k=1,
+                    mode="max",
+                    save_last=True,
+                ),
+            ]  
+        else:
+            callbacks = [
+                ModelCheckpoint(
+                    logger.log_dir,
+                    monitor="Val/obj_metric",
+                    save_top_k=1,
+                    mode="max",
+                    save_last=True,
+                ),
+            ]  
 
         precision = 32
 
@@ -245,6 +267,7 @@ def single_run(
         fast_dev_run=fast_dev_run,
         evaluation=evaluation,
         noisy=noisy,
+        filter_aug=filter_aug,
         precision=precision,
     )
 
@@ -336,6 +359,13 @@ if __name__ == "__main__":
         default=False,
         help="add noise to the input features of the teacher",
     )
+
+    parser.add_argument(
+        "--filter_aug",
+        action="store_true",
+        default=False,
+        help="apply filter augmemt to the input features of the teacher",
+    )
     args = parser.parse_args()
 
     with open(args.conf_file, "r") as f:
@@ -362,7 +392,7 @@ if __name__ == "__main__":
     if evaluation:
         config["training"]["batch_size_val"] = 1
 
-    seed = config["training"]["seed"] * 14
+    seed = config["training"]["seed"]
     config["training"].update({"seed": seed})
     if seed:
         torch.random.manual_seed(seed)
@@ -379,4 +409,5 @@ if __name__ == "__main__":
         args.fast_dev_run,
         evaluation,
         args.noisy,
+        args.filter_aug,
     )

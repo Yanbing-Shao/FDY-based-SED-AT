@@ -105,7 +105,7 @@ class ConcatDatasetUrban(torch.utils.data.ConcatDataset):
                     sort_order_unlab.astype(int)
                 ]
         else:
-            from_SONYC = [s[0] != "[" for s in filenames]
+            from_SONYC = [len(s) < 40 for s in filenames]
 
             indices_SONYC = indices[from_SONYC]
             indices_SINGAPURA = indices[~np.array(from_SONYC)]

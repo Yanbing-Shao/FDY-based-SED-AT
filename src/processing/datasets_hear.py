@@ -161,7 +161,7 @@ class ConcatDatasetUrban(torch.utils.data.ConcatDataset):
                 raise ValueError("set batch_size to [?,?,0]. Should be fixed later.")
 
         else:
-            from_SONYC = [s[0] != "[" for s in filenames]
+            from_SONYC = [len(s) < 40 for s in filenames]
 
             indices_SONYC = indices[from_SONYC]
             indices_SINGAPURA = indices[~np.array(from_SONYC)]

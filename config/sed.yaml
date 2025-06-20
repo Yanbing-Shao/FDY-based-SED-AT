@@ -1,18 +1,19 @@
-experiment_name: '[0,32,0]_log+pcen'
+experiment_name: '[8, 16, 24]_[09, 01, 0]_log+pcen_baseline_SGP_strong'
+model_type: "CRNN" # para to determine which mode to be used (not test yet)
 training:
-  train_on_fine_taxo: True
+  train_on_fine_taxo: False
   #batch size: [SGP, SONYC, SGP_unlab]
-  batch_size: [0, 32, 0]
-  batch_size_val: 128
+  batch_size: [8, 16, 24]
+  batch_size_val: 128  # try a small val then drop last - roll back to 128
   # supervised loss weights for [SGP_strong, SONYC_weak, SGP_weak]
-  weight_loss_sup: [0, 1, 0]
+  weight_loss_sup: [0.9, 0.1, 0.001] #[0, 1, 0] for system totally trained on SONYC
   scheduler_type : "none"
   const_max: 2 # max weight used for self supervised loss
   n_steps_warmup: # num steps used for exponential warmup
   n_epochs_warmup: 30 # num epochs used for exponential warmup
   num_workers: 6 # change according to your cpu
-  n_epochs: 150 # max num epochs
-  early_stop_patience: 20
+  n_epochs: 220 # max num epochs
+  early_stop_patience: 100
   accumulate_batches: 1
   gradient_clip: 0 # 0 no gradient clipping
   median_window: 7 # length of median filter used to smooth prediction in inference (nb of output frames)
@@ -22,16 +23,17 @@ training:
   supervised_loss: focal
   self_sup_loss: mse # bce or mse for self supervised mean teacher loss
   backend: # pytorch lightning backend, ddp, dp or None
-  limit_train_batches: 142
+  limit_train_batches: 562 # 142 prev - for 4435 SGP audio with bs = 32
   validation_interval: 1 # perform validation every X epoch, 1 default
   check_train_every_n_epochs: 0 # Evaluate classification metrics on the train set every n epochs, default 10
-  seed: 42
+  seed: 168
   mixup: soft # Soft mixup gives the ratio of the mix to the labels, hard mixup gives a 1 to every label present.
   obj_metric_synth_type: detection
+  early_stopping: True
 scaler:
   statistic: instance # instance or dataset-wide statistic
   normtype: standard # minmax or standard or mean normalization
-  dims: [2,] # dimensions over which normalization is applied
+  dims: [1,2] # dimensions over which normalization is applied - input feature shape (B, H, W)
   savepath: ./scaler.ckpt # path to scaler checkpoint
 
 opt:
@@ -47,11 +49,19 @@ features:
   f_max: 16000
   transform_type: log+pcen
   pcen_trainable: False
+
+transform:
+  filter_db_range: [ -4.5, 6 ]       # db range of FilterAugment to be applied on each band
+  filter_bands: [ 2, 5 ]             # range of frequency band number in FilterAugment
+  filter_minimum_bandwidth: 4
+  filter_type: step
+
+
 net:
-  dropout: 0.5
+  dropout: 0.4
   rnn_layers: 2
-  n_in_channel: 1
-  nclass: 10
+  n_in_channel: 2
+  nclass: 15
   attention: True
   n_RNN_cell: 128
   activation: glu
@@ -67,16 +77,17 @@ data:
   audio_max_len: 10
   fs: 32000
   net_subsample: 4
-  root_path: # put the root path of the data folder here
+  root_path: /home/tianzichen/SELDProjects/CoSMo/data/ # put the root path of the data folder here
   hdf5_train: "train.h5"
   hdf5_val: "val.h5"
   hdf5_test: "test.h5"
   sonyc_csv_train: "metadata/train/SONYC_train.csv"
   sonyc_csv_val: "metadata/val/SONYC_val.csv"
   sonyc_csv_test: "metadata/test/SONYC_test.csv"
+  raw_singa-pura_csv_root: "/home/tianzichen/sound_datasets/singapura/labels_public"
   singa-pura_csv_train: "metadata/train/SINGA-PURA_train.csv"
   singa-pura_csv_val: "metadata/val/SINGA-PURA_val.csv"
   singa-pura_csv_test: "metadata/test/SINGA-PURA_test.csv"
   singa-pura_csv_unlabelled: "metadata/train/SINGA-PURA_unlabelled.csv"
-  taxonomy_path: "/gpfswork/rech/gpz/ufg11lw/Detection-Urban/config/taxonomy_SONYC.yaml"
+  taxonomy_path: "/home/tianzichen/SELDProjects/CoSMo/config/taxonomy_SINGA-PURA.yaml" #it seems that there's an taxonomy_SONYC.yaml file in config folder
 

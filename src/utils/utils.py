@@ -44,6 +44,7 @@ def batched_decode_preds(
     """
 
     # Init a dataframe per threshold
+    # pred["filename"] = Path(filenames[j]).stem may lead to mismatch of filenames
     prediction_dfs = {}
     for threshold in thresholds:
         prediction_dfs[threshold] = pd.DataFrame()
@@ -59,7 +60,7 @@ def batched_decode_preds(
             pred = scipy.ndimage.median_filter(pred, (1, median_filter))
             pred = encoder.decode_strong(pred)
             pred = pd.DataFrame(pred, columns=["event_label", "onset", "offset"])
-            pred["filename"] = Path(filenames[j]).stem
+            pred["filename"] = filenames[j]
             prediction_dfs[c_th] = pd.concat(
                 [prediction_dfs[c_th], pred], ignore_index=True
             )
@@ -151,7 +152,7 @@ def get_rescale_matrix(encoder_in, encoder_out):
 def focal_loss(
     inputs: torch.Tensor,
     targets: torch.Tensor,
-    alpha: float = 0.75,
+    alpha: float = 0.8,
     gamma: float = 2,
     reduction: str = "mean",
 ):

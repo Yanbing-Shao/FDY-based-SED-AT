@@ -6,7 +6,7 @@ from copy import deepcopy
 import torchmetrics
 import sklearn.metrics as M
 import numpy as np
-import pandas as pdF
+import pandas as pd
 import pytorch_lightning as pl
 import torch
 from utils.utils import (

@@ -1,0 +1,8 @@
+singa-pura数据集annotation修改：
+    CSV文件缺失: /home/tianzichen/sound_datasets/singapura/labels_public/[b827eb7d576e][2020-08-03T23-32-11Z][manual][---][565a40f866f3d2804332ca7896a4c77d][93.29-86.29 66.65]!-90.csv
+    该csv文件文件名缺失一部分，已经补全
+
+    使用方法：
+    加载config
+    加载encoder
+    加载generateSGPGroundtruthEmbedding()

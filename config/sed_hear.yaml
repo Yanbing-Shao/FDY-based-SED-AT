@@ -5,7 +5,7 @@ data:
   hdf5_train: train_hear.h5
   hdf5_val: val.h5
   net_subsample: 4
-  root_path: # put the root path of the data folder here
+  root_path: /home/tianzichen/SELDProjects/CoSMo/data/ # put the root path of the data folder here
   singa-pura_csv_test: metadata/test/SINGA-PURA_test.csv
   singa-pura_csv_train: metadata/train/SINGA-PURA_train.csv
   singa-pura_csv_val: metadata/val/SINGA-PURA_val.csv
