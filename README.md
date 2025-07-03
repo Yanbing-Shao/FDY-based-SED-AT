@@ -1,5 +1,6 @@
-Repository for the paper ''Cosmopolite Sound Monitoring (CoSMo) : a study of urban sound event detection systems generalizing to multiple cities''
+Forked from Repository for the paper ''Cosmopolite Sound Monitoring (CoSMo) : a study of urban sound event detection systems generalizing to multiple cities''
 
+Add new model FDY-SED
 
 ### Comparison of audio frontends when training only on SONYC (extension of Fig. 1 from the paper)
 ![Alt text](experiments/figures/frontend_comparison.png?raw=True)
