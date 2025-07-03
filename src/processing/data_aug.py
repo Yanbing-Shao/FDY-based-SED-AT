@@ -63,9 +63,14 @@ def add_noise(mels, snrs=(10, 30), dims=(1, 2)):
         torch.Tensor of mels with noise applied
     """
     if isinstance(snrs, (list, tuple)):
-        snr = (snrs[0] - snrs[1]) * torch.rand(
-            (mels.shape[0],), device=mels.device
-        ).reshape(-1, 1, 1,1) + snrs[1]
+        if len(mels.shape) == 4:
+            snr = (snrs[0] - snrs[1]) * torch.rand(
+                (mels.shape[0],), device=mels.device
+            ).reshape(-1, 1, 1,1) + snrs[1]
+        else: # (B, H, W)
+            snr = (snrs[0] - snrs[1]) * torch.rand(
+                (mels.shape[0],), device=mels.device
+            ).reshape(-1, 1, 1) + snrs[1]
     else:
         snr = snrs
 
@@ -83,7 +88,11 @@ def filt_aug(features,
              filter_type="step",
              log=True):
     # this is updated FilterAugment algorithm used for ICASSP 2022
-    batch_size, n_channels, n_freq_bin, _ = features.shape
+    feature_dim = len(features.shape)
+    if feature_dim == 4:
+        batch_size, n_channels, n_freq_bin, _ = features.shape
+    else:
+        batch_size, n_freq_bin, _ = features.shape
     n_freq_band = torch.randint(low=n_band[0], high=n_band[1], size=(1, )).item()  # [low, high)
     if n_freq_band > 1:
         while n_freq_bin - n_freq_band * min_bw + 1 < 0:
@@ -99,10 +108,16 @@ def filt_aug(features,
                 (batch_size, n_freq_band)).to(features) * (db_range[1] - db_range[0]) + db_range[0]
             band_factors = 10**(band_factors / 20)
 
-            freq_filt = torch.ones((batch_size, 1, n_freq_bin, 1)).to(features)
-            for i in range(n_freq_band):
-                freq_filt[:,:, band_bndry_freqs[i]:band_bndry_freqs[i + 1], :] =\
+            if feature_dim == 4:
+                freq_filt = torch.ones((batch_size, 1, n_freq_bin, 1)).to(features)
+                for i in range(n_freq_band):
+                    freq_filt[:,:, band_bndry_freqs[i]:band_bndry_freqs[i + 1], :] =\
                     band_factors[:,i].unsqueeze(1).unsqueeze(-1).unsqueeze(-1)
+            else:
+                freq_filt = torch.ones((batch_size, n_freq_bin, 1)).to(features)
+                for i in range(n_freq_band):
+                    freq_filt[:,band_bndry_freqs[i]:band_bndry_freqs[i + 1], :] =\
+                    band_factors[:,i].unsqueeze(-1).unsqueeze(-1)
         else:
             raise Exception("Unkonwn filter augment type")
 

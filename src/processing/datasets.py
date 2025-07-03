@@ -75,27 +75,35 @@ class ConcatDatasetUrban(torch.utils.data.ConcatDataset):
                     self.n_frames,
                 )
             )
-
-            if indx_strong > 0:
-                sort_order_strong = np.argsort(indices[:indx_strong])
-                audio[:indx_strong] = self.hdf5["SINGA-PURA"]["audio_32k"][
-                    np.sort(indices[:indx_strong])
-                ]
-                labels[:indx_strong] = self.hdf5["SINGA-PURA"]["groundtruth"][self.taxo_name][
-                    np.sort(indices[:indx_strong])
-                ]
-                filenames[:indx_strong] = filenames[:indx_strong][sort_order_strong.astype(int)]
-            if indx_weak > 0:
-                sort_order_weak = np.argsort(indices[indx_strong : indx_strong + indx_weak])
-                audio[indx_strong : indx_strong + indx_weak] = self.hdf5["SONYC"]["audio_32k"][
-                    np.sort(indices[indx_strong : indx_strong + indx_weak])
-                ]
-                labels[indx_strong : indx_strong + indx_weak, :, 0] = self.hdf5["SONYC"][
-                    "groundtruth"
-                ][self.taxo_name][np.sort(indices[indx_strong : indx_strong + indx_weak])]
-                filenames[indx_strong : indx_strong + indx_weak] = filenames[
-                    indx_strong : indx_strong + indx_weak
-                ][sort_order_weak.astype(int)]
+            #  for unlabelled data, random sampler is ok, still using HDF5 fancy-indexing
+            # for labelled data, using circular method to avoid duplicated index.
+            # if indx_strong > 0:
+            #     sort_order_strong = np.argsort(indices[:indx_strong])
+            #     audio[:indx_strong] = self.hdf5["SINGA-PURA"]["audio_32k"][
+            #         np.sort(indices[:indx_strong])
+            #     ]
+            #     labels[:indx_strong] = self.hdf5["SINGA-PURA"]["groundtruth"][self.taxo_name][
+            #         np.sort(indices[:indx_strong])
+            #     ]
+            #     filenames[:indx_strong] = filenames[:indx_strong][sort_order_strong.astype(int)]
+            # if indx_weak > 0:
+            #     sort_order_weak = np.argsort(indices[indx_strong : indx_strong + indx_weak])
+            #     audio[indx_strong : indx_strong + indx_weak] = self.hdf5["SONYC"]["audio_32k"][
+            #         np.sort(indices[indx_strong : indx_strong + indx_weak])
+            #     ]
+            #     labels[indx_strong : indx_strong + indx_weak, :, 0] = self.hdf5["SONYC"][
+            #         "groundtruth"
+            #     ][self.taxo_name][np.sort(indices[indx_strong : indx_strong + indx_weak])]
+            #     filenames[indx_strong : indx_strong + indx_weak] = filenames[
+            #         indx_strong : indx_strong + indx_weak
+            #     ][sort_order_weak.astype(int)]
+            for i, idx in enumerate(indices[:indx_strong + indx_weak]):
+                if i < indx_strong:  # SINGA-PURA 强标签样本
+                    audio[i] = self.hdf5["SINGA-PURA"]["audio_32k"][idx]
+                    labels[i] = self.hdf5["SINGA-PURA"]["groundtruth"][self.taxo_name][idx]
+                else:  # SONYC 弱标签样本
+                    audio[i] = self.hdf5["SONYC"]["audio_32k"][idx]
+                    labels[i, :, 0] = self.hdf5["SONYC"]["groundtruth"][self.taxo_name][idx]
             if indx_unlabelled > 0:
                 sort_order_unlab = np.argsort(indices[-indx_unlabelled:])
                 audio[-indx_unlabelled:] = self.hdf5["unlabelled_SINGA-PURA"]["audio_32k"][
@@ -158,9 +166,11 @@ class HDF5_dataset(Dataset):
         encoder,
         remove_non_target=True,
     ):
+        self.dname = dname
         self.hdf5_path = hdf5_path
         self.taxo_name = encoder.taxonomy["name"]
         self.n_classes = len(encoder.taxonomy["class_labels"])
+        self.weak_labels = []
         with h5py.File(hdf5_path, "r") as hf:
             filenames = hf[dname]["filenames"]
             if (dname != "unlabelled_SINGA-PURA") and remove_non_target:
@@ -168,9 +178,17 @@ class HDF5_dataset(Dataset):
                 axis = (1, 2) if dname == "SINGA-PURA" else 1
                 self.ids = np.where(np.any(labels, axis=axis))[0]
                 self.filenames = filenames[self.ids].astype(str)
+                for idx in self.ids:
+                    if dname == "SINGA-PURA":
+                        # 强标签：取时间轴上的最大值
+                        self.weak_labels.append(np.max(labels[idx], axis=1))
+                    else:  # SONYC
+                        # 弱标签：直接存储
+                        self.weak_labels.append(labels[idx])
             else:
                 self.ids = np.arange(len(filenames))
                 self.filenames = np.array(filenames).astype(str)
+                self.weak_labels = [np.zeros(self.n_classes) for _ in self.ids]
 
             if dname == "SINGA-PURA":
                 self.durations, self.groundtruths = self._generate_eval_dfs(hf, encoder)

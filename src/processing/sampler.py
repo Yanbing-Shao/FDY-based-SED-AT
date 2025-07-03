@@ -65,8 +65,9 @@ class ConcatDatasetBatchSampler(Sampler):
                 yield batch
 
     def set_epoch(self, epoch):
-        if hasattr(self.samplers[0], "epoch"):
-            for s in self.samplers:
+        # modify it to support all sampler (according to Deepseek)
+        for s in self.samplers:
+            if hasattr(s, "set_epoch"):
                 s.set_epoch(epoch)
 
     def __iter__(self):

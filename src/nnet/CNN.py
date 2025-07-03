@@ -9,28 +9,17 @@ import torch.nn as nn
 
 
 class GLU(nn.Module):
-    def __init__(self, in_size):
-        """Initialize a Gated Linear Unit
-        Args:
-            in_size (int): size of input
-        """
-        super().__init__()
+    def __init__(self, in_dim):
+        super(GLU, self).__init__()
         self.sigmoid = nn.Sigmoid()
-        self.linear = nn.Linear(in_size, in_size)
+        self.linear = nn.Linear(in_dim, in_dim)
 
-    def forward(self, x):
-        """Apply GLU on a given tensor
-        Args:
-            x (tensor)
-        Returns:
-            tensor
-        """
-        lin = self.linear(x.permute(0, 2, 3, 1))
-        lin = lin.permute(0, 3, 1, 2)
-        # ? In the general case, sigmoid is applied to another Linear output from x
-        sig = self.sigmoid(lin)
-        return lin * sig
-
+    def forward(self, x): #x size = [batch, chan, freq, frame]
+        lin = self.linear(x.permute(0, 2, 3, 1)) #x size = [batch, freq, frame, chan]
+        lin = lin.permute(0, 3, 1, 2) #x size = [batch, chan, freq, frame]
+        sig = self.sigmoid(x)
+        res = lin * sig
+        return res
 
 class ContextGating(nn.Module):
     def __init__(self, in_size):

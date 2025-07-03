@@ -10,6 +10,7 @@ from pytorch_lightning.callbacks import EarlyStopping, ModelCheckpoint
 from pytorch_lightning.loggers import TensorBoardLogger
 
 from processing.sampler import ConcatDatasetBatchSampler
+from torch.utils.data import WeightedRandomSampler
 from processing.datasets import HDF5_dataset, ConcatDatasetUrban
 from nnet.CRNN import CRNN
 from nnet.FDCRNN import FDCRNN
@@ -74,7 +75,23 @@ def single_run(
     else:
         print(f"No model exists, check config")
 
-
+# data prep sampler
+    def compute_weights(dataset):
+        labels = np.array(dataset.weak_labels)
+        class_counts = labels.sum(axis=0)
+        class_weights = 1.0 / (class_counts + 1e-5)  # 防止除零
+        sample_weights = []
+        for j in range(len(labels)):
+            if labels[j].sum() > 0:
+                # 取样本中所有正类的最小权重
+                idx = np.where(labels[j] == 1)[0]
+                weight = class_weights[idx].min()
+            else:
+                # 背景样本取平均权重
+                weight = class_weights.mean()
+            sample_weights.append(weight)
+        return torch.tensor(sample_weights, dtype=torch.float32)
+    
     if test_state_dict is None:
         ##### data prep train valid ##########
         SINGAPURA_train_set = HDF5_dataset(
@@ -110,20 +127,36 @@ def single_run(
         batch_sizes = config["training"]["batch_size"]
         bs = []
         tot_train_data = []
+        samplers = []
         if batch_sizes[0] > 0:
             tot_train_data.append(SINGAPURA_train_set)
             bs.append(batch_sizes[0])
+            weights = compute_weights(SINGAPURA_train_set)
+            sampler = WeightedRandomSampler(
+                    weights, len(SINGAPURA_train_set), replacement=True
+                )
+            samplers.append(sampler)
         if batch_sizes[1] > 0:
             tot_train_data.append(SONYC_train_set)
             bs.append(batch_sizes[1])
+            weights = compute_weights(SONYC_train_set)
+            sampler = WeightedRandomSampler(
+                    weights, len(SONYC_train_set), replacement=True
+                )
+            samplers.append(sampler)
         if batch_sizes[2] > 0:
             tot_train_data.append(unlabelled_SINGAPURA_train_set)
             bs.append(batch_sizes[2])
+            sampler = torch.utils.data.RandomSampler(unlabelled_SINGAPURA_train_set)
+            samplers.append(sampler)
+
+        # modify sampler (weighted random sampler) to suite imbalanced data
+        # samplers = [torch.utils.data.RandomSampler(x) for x in tot_train_data]
+        # batch_sampler = ConcatDatasetBatchSampler(samplers, bs)
 
         train_dataset = ConcatDatasetUrban(
             tot_train_data, encoder, batch_sizes=batch_sizes
         )
-        samplers = [torch.utils.data.RandomSampler(x) for x in tot_train_data]
         batch_sampler = ConcatDatasetBatchSampler(samplers, bs)
 
         valid_dataset = ConcatDatasetUrban(

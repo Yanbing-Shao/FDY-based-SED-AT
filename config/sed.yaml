@@ -1,4 +1,4 @@
-experiment_name: '[8, 16, 24]_[09, 01, 0]_log+pcen_baseline_SGP_strong'
+experiment_name: '[8, 16, 24]_[1, 0.5,0]_log_baseline_SGP_strong'
 model_type: "CRNN" # para to determine which mode to be used (not test yet)
 training:
   train_on_fine_taxo: False
@@ -6,14 +6,14 @@ training:
   batch_size: [8, 16, 24]
   batch_size_val: 128  # try a small val then drop last - roll back to 128
   # supervised loss weights for [SGP_strong, SONYC_weak, SGP_weak]
-  weight_loss_sup: [0.9, 0.1, 0.001] #[0, 1, 0] for system totally trained on SONYC
+  weight_loss_sup: [1, 0.5, 0.1] #[0, 1, 0] for system totally trained on SONYC
   scheduler_type : "none"
   const_max: 2 # max weight used for self supervised loss
   n_steps_warmup: # num steps used for exponential warmup
   n_epochs_warmup: 30 # num epochs used for exponential warmup
   num_workers: 6 # change according to your cpu
   n_epochs: 220 # max num epochs
-  early_stop_patience: 100
+  early_stop_patience: 60
   accumulate_batches: 1
   gradient_clip: 0 # 0 no gradient clipping
   median_window: 7 # length of median filter used to smooth prediction in inference (nb of output frames)
@@ -47,8 +47,8 @@ features:
   sample_rate: 32000
   f_min: 0
   f_max: 16000
-  transform_type: log+pcen
-  pcen_trainable: False
+  transform_type: log
+  pcen_trainable: True
 
 transform:
   filter_db_range: [ -4.5, 6 ]       # db range of FilterAugment to be applied on each band
@@ -60,7 +60,7 @@ transform:
 net:
   dropout: 0.4
   rnn_layers: 2
-  n_in_channel: 2
+  n_in_channel: 1
   nclass: 15
   attention: True
   n_RNN_cell: 128

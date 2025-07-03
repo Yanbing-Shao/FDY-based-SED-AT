@@ -1,39 +1,39 @@
 # sed.yaml (修改后)
 
-experiment_name: '[8, 16, 16]_loss_[0.9,0.1, 0]_log+pcen_FDCRNN_SONYC_strong'
+experiment_name: '[8, 16, 16]_loss_[1,0.5, 0.1]_log_FDCRNN_SGP_strong'
 model_type: "FDCRNN"       # 指定使用FDCRNN模型
 training:
   train_on_fine_taxo: False
   # batch size: [SGP, SONYC, SGP_unlab]
   batch_size: [8, 16, 16]  # 与FDCRNN配置对齐
   batch_size_val: 128
-  weight_loss_sup: [0.9, 0.1, 0.0001] #[0, 1, 0] for system totally trained on SONYC [SGP_strong, SONYC_weak, SGP_weak]
+  weight_loss_sup: [1, 0.5, 0.1] #[0, 1, 0] for system totally trained on SONYC [SGP_strong, SONYC_weak, SGP_weak]
   scheduler_type : "none"
   const_max: 2 # max weight used for sel0f supervised loss
   n_epochs_warmup: 50        # 与FDCRNN config.yaml中的warmup对齐
-  n_epochs: 220              # 总训练轮数
-  num_workers: 4
-  early_stop_patience: 100
+  n_epochs: 300              # 总训练轮数
+  num_workers: 8
+  early_stop_patience: 60
   accumulate_batches: 1
   gradient_clip: 0
-  median_window: 7
+  median_window: 5
   val_thresholds: [0.5]
   n_test_thresholds: 50
   ema_factor: 0.999
-  supervised_loss: focal
+  supervised_loss: mse
   self_sup_loss: mse
   backend: # pytorch lightning backend, ddp, dp or None
   limit_train_batches: 539 # 142 prev - for 4435 SGP audio with bs = 32
   validation_interval: 1 # perform validation every X epoch, 1 default
   check_train_every_n_epochs: 0 # Evaluate classification metrics on the train set every n epochs, default 10
-  seed: 128
+  seed: 30
   mixup: soft                # 与FDCRNN的mixup_type对齐
   obj_metric_synth_type: detection
   early_stopping: True
 scaler:
   statistic: instance # instance or dataset-wide statistic
   normtype: minmax # minmax or standard or mean normalization
-  dims: [1,2] # dimensions over which normalization is applied
+  dims: [2] # dimensions over which normalization is applied
   savepath: ./scaler.ckpt # path to scaler checkpoint
 
 net:  # 修改CRNN配置为FDCRNN参数
@@ -54,7 +54,7 @@ net:  # 修改CRNN配置为FDCRNN参数
   temperature: 31            # 注意力温度参数
   pool_dim: "time"           # 池化维度配置
   rec_dropout: 0
-  normalization: "group"
+  normalization: "batch"
 
 features:
   n_mels: 128
@@ -64,7 +64,7 @@ features:
   sample_rate: 32000         # 确保与数据预处理一致
   f_min: 0
   f_max: 16000
-  transform_type: log+pcen
+  transform_type: log
   pcen_trainable: False
 
 transform:

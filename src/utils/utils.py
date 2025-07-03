@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 import numpy as np
 import pandas as pd
-import scipy
+from scipy import ndimage
 import torch
 import torch.nn.functional as F
 from .evaluation_measures import compute_sed_eval_metrics
@@ -57,7 +57,7 @@ def batched_decode_preds(
                 c_preds = c_preds[:true_len]
             pred = c_preds.detach().cpu().numpy()
             pred = pred > c_th
-            pred = scipy.ndimage.median_filter(pred, (1, median_filter))
+            pred = ndimage.median_filter(pred, (1, median_filter))
             pred = encoder.decode_strong(pred)
             pred = pd.DataFrame(pred, columns=["event_label", "onset", "offset"])
             pred["filename"] = filenames[j]
