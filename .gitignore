@@ -2,6 +2,5 @@
 /experiments/COSMO/
 /testScripts/
 /src/hear21passt/
-*.log
-__pycache__
-*.txt
+**/__pycache__/
+**/*.log
