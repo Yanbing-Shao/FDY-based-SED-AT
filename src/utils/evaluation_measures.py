@@ -245,6 +245,7 @@ def compute_psds_from_operating_points(
         )
 
         class_names = psds_eval.class_names
+        print(class_names)
 
         tpr_vs_fpr_lin, _, _ = psds_eval.psd_roc_curves(alpha_ct=0.0)
         plot_per_class_psd_roc(

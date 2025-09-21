@@ -1,4 +1,4 @@
-experiment_name: '[8, 16, 24]_[1, 0.5,0]_log+_baseline_SGP_strong'
+experiment_name: '[8, 16, 24]_[1, 0.5,0]_16k_log+pcen_baseline_SONYC_strong'
 model_type: "CRNN" # para to determine which mode to be used (not test yet)
 training:
   train_on_fine_taxo: True
@@ -41,14 +41,14 @@ opt:
   lr: 0.0005
 features:
   n_mels: 128
-  n_filters: 2048
+  n_filters: 1024
   hop_length: 512
-  n_window: 2048
-  sample_rate: 32000
+  n_window: 1024
+  sample_rate: 16000
   f_min: 0
-  f_max: 16000
-  transform_type: log
-  pcen_trainable: False
+  f_max: 8000
+  transform_type: log+pcen
+  pcen_trainable: True
 
 transform:
   filter_db_range: [ -4.5, 6 ]       # db range of FilterAugment to be applied on each band
@@ -75,12 +75,12 @@ net:
 
 data:
   audio_max_len: 10
-  fs: 32000
+  fs: 16000
   net_subsample: 4
   root_path: /home/tianzichen/SELDProjects/CoSMo/data/ # put the root path of the data folder here
-  hdf5_train: "train.h5"
-  hdf5_val: "val.h5"
-  hdf5_test: "test.h5"
+  hdf5_train: "train_16k.h5"
+  hdf5_val: "val_16k.h5"
+  hdf5_test: "test_16k.h5"
   sonyc_csv_train: "metadata/train/SONYC_train.csv"
   sonyc_csv_val: "metadata/val/SONYC_val.csv"
   sonyc_csv_test: "metadata/test/SONYC_test.csv"
@@ -89,5 +89,5 @@ data:
   singa-pura_csv_val: "metadata/val/SINGA-PURA_val.csv"
   singa-pura_csv_test: "metadata/test/SINGA-PURA_test.csv"
   singa-pura_csv_unlabelled: "metadata/train/SINGA-PURA_unlabelled.csv"
-  taxonomy_path: "/home/tianzichen/SELDProjects/CoSMo/config/taxonomy_SINGA-PURA.yaml" #it seems that there's an taxonomy_SONYC.yaml file in config folder
+  taxonomy_path: "/home/tianzichen/SELDProjects/CoSMo/config/taxonomy_SONYC.yaml" #it seems that there's an taxonomy_SONYC.yaml file in config folder
 

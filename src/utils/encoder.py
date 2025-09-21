@@ -26,7 +26,7 @@ class ManyHotEncoder:
         frame_len,
         frame_hop,
         net_pooling=1,
-        fs=32000,
+        fs=16000,
     ):
 
         self.taxonomy_coarse = taxonomy["coarse"]

@@ -10,7 +10,7 @@ from pytorch_lightning.callbacks import EarlyStopping, ModelCheckpoint
 from pytorch_lightning.loggers import TensorBoardLogger
 
 from processing.sampler import ConcatDatasetBatchSampler
-from torch.utils.data import WeightedRandomSampler
+from torch.utils.data import WeightedRandomSampler, RandomSampler
 from processing.datasets import HDF5_dataset, ConcatDatasetUrban
 from nnet.CRNN import CRNN
 from nnet.FDCRNN import FDCRNN
@@ -147,7 +147,7 @@ def single_run(
         if batch_sizes[2] > 0:
             tot_train_data.append(unlabelled_SINGAPURA_train_set)
             bs.append(batch_sizes[2])
-            sampler = torch.utils.data.RandomSampler(unlabelled_SINGAPURA_train_set)
+            sampler = RandomSampler(unlabelled_SINGAPURA_train_set)
             samplers.append(sampler)
 
         # modify sampler (weighted random sampler) to suite imbalanced data

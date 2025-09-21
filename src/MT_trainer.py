@@ -10,6 +10,7 @@ import pandas as pd
 import pytorch_lightning as pl
 import torch
 import torchaudio
+import yaml
 
 torchaudio.set_audio_backend("sox_io")
 from torchaudio.transforms import AmplitudeToDB, MelSpectrogram
@@ -109,7 +110,6 @@ class CoSMo_benchmark(pl.LightningModule):
         # self.pcen = sb.nnet.normalization.PCEN(input_size=feat_params["n_mels"], trainable = feat_params["pcen_trainable"], per_channel_smooth_coef = feat_params["pcen_trainable"])
 
         # Per-Channel Energy Normalization with advised values from Lostanlen "PCEN : why and how"
-
         self.pcen = sb.nnet.normalization.PCEN(
             input_size=feat_params["n_mels"],
             trainable=feat_params["pcen_trainable"],
@@ -121,9 +121,7 @@ class CoSMo_benchmark(pl.LightningModule):
         )
 
         # If we learn the pcen parameters, we add them to the optimizer
-        # 2025-06-12 there's no optimizer during load_from_checkpoint process.
-        if feat_params["pcen_trainable"] and self.opt is not None :
-            self.opt.add_param_group({"params": list(self.pcen.parameters())})
+        # 2025-06-12 there's no optimizer during load_from_checkpoint process. - try to move it to configure_optimizers()
 
         # We detach the teacher model parameters of the graph
         for param in self.sed_teacher.parameters():
@@ -160,6 +158,9 @@ class CoSMo_benchmark(pl.LightningModule):
         # Initialize scalers
         self.scaler_logmel = self._init_scaler("log")
         self.scaler_pcen = self._init_scaler("pcen")
+
+        # save hyperparameters
+        self.save_hyperparameters()
 
     def get_MT_scaling_factor(self, exponent=-5.0):
         if self.rampup_len == 0:
@@ -860,6 +861,40 @@ class CoSMo_benchmark(pl.LightningModule):
             self.logger.log_metrics(results)
             self.logger.log_hyperparams(self.hparams, results)
 
+            # +++ 修复：正确提取 PCEN 参数 +++
+        if self.hparams["features"]["pcen_trainable"]:
+            try:
+                # 检查 PCEN 参数的结构
+                pcen_params = {}
+            
+                # 获取所有可学习的参数
+                for name, param in self.pcen.named_parameters():
+                    if param.requires_grad:
+                        # 如果是标量参数
+                        if param.numel() == 1:
+                            pcen_params[name] = param.item()
+                    # 如果是多值参数（如 per-channel）
+                        else:
+                            pcen_params[name] = param.detach().cpu().numpy().tolist()
+            
+                # 添加固定参数
+                pcen_params.update({
+                    "per_channel": getattr(self.pcen, 'per_channel', False),
+                    "input_size": getattr(self.pcen, 'input_size', self.hparams["features"]["n_mels"])
+                })
+            
+                # 保存为 YAML 文件
+                pcen_save_path = os.path.join(save_dir, "pcen_params.yaml")
+                with open(pcen_save_path, 'w') as f:
+                    yaml.dump(pcen_params, f)
+                
+                print(f"Saved PCEN parameters to {pcen_save_path}")
+            
+            except Exception as e:
+                print(f"Error extracting PCEN parameters: {e}")
+                import traceback
+                traceback.print_exc()
+
         for key in results.keys():
             self.log(key, results[key], prog_bar=True, logger=False)
 
@@ -924,6 +959,8 @@ class CoSMo_benchmark(pl.LightningModule):
         self.on_train_start()
 
     def configure_optimizers(self):
+        if self.hparams["features"]["pcen_trainable"] and self.opt is not None :
+            self.opt.add_param_group({"params": list(self.pcen.parameters())})
         if self.scheduler is not None:
             return [self.opt], [{"scheduler": self.scheduler, "interval": "step"}]
         else:
@@ -1263,9 +1300,9 @@ class CoSMo_benchmark(pl.LightningModule):
                 raise NotImplementedError(
                     f"obj_metric_strong_type: {obj_metric_strong_type} not implemented."
                 )
-
+# give an larger weight for strong prediction
             if self.hparams["training"]["batch_size"][0] > 0 and self.weight_loss_sup[0] > 0:
-                obj_metric += strong_metric
+                obj_metric += strong_metric * 2
 
             self.log(f"{split}/obj_metric", obj_metric)
             self.log(f"{split}/strong_SGP_intersection_f1_macro", intersection_f1_macro)

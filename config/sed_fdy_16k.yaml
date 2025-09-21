@@ -58,12 +58,12 @@ net:  # 修改CRNN配置为FDCRNN参数
 
 features:
   n_mels: 128
-  n_filters: 2048
+  n_filters: 1024
   hop_length: 512            # 与FDCRNN的hop_length=256不同，需调整
-  n_window: 2048
-  sample_rate: 32000         # 确保与数据预处理一致
+  n_window: 1024
+  sample_rate: 16000        # 确保与数据预处理一致
   f_min: 0
-  f_max: 16000
+  f_max: 8000
   transform_type: log+pcen
   pcen_trainable: True
 

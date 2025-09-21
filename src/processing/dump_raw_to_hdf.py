@@ -21,7 +21,7 @@ parser.add_argument(
 parser.add_argument(
     "-f", "--folder", type=str, required=True, help="Path to audio folder"
 )
-parser.add_argument("-sr", type=int, default=32000)
+parser.add_argument("-sr", type=int, default=16000)
 parser.add_argument("-sep", default=",", type=str)
 args = parser.parse_args()
 

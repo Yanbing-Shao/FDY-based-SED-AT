@@ -108,6 +108,7 @@ class attention2d(nn.Module):
             self.conv1d1 = nn.Conv1d(in_planes, hidden_planes, kernel_size, stride=stride, padding=padding, bias=False)
             self.bn = nn.BatchNorm1d(hidden_planes)
             self.relu = nn.ReLU(inplace=True)
+            self.silu = nn.SiLU(inplace=True)
             self.conv1d2 = nn.Conv1d(hidden_planes, n_basis_kernels, 1, bias=True)
             for m in self.modules():
                 if isinstance(m, nn.Conv1d):
@@ -166,7 +167,7 @@ class CNN(nn.Module):
         self.n_filt_last = n_filt[-1]
         cnn = nn.Sequential()
 
-        def conv(i, normalization="group", dropout=None, activ='relu'):
+        def conv(i, normalization="batch", dropout=None, activ='relu'):
             in_dim = n_in_channel if i == 0 else n_filt[i - 1]
             out_dim = n_filt[i]
             if DY_layers[i] == 1:
