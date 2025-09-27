@@ -1,6 +1,6 @@
 # sed.yaml (修改后)
 
-experiment_name: '[8, 16, 16]_loss_[1,0.5, 0.01]_log+pcen_FDCRNN_SONYC_Strong_fine_batchnorm_0916'
+experiment_name: '[8, 16, 16]_loss_[1,0.5, 0.01]_log+pcen_16k_FDCRNN_SONYC_Strong_fine_batchnorm_0921'
 model_type: "FDCRNN"       # 指定使用FDCRNN模型
 training:
   train_on_fine_taxo: True

@@ -1,4 +1,4 @@
-experiment_name: '[8, 16, 24]_[1, 0.5,0]_16k_log+pcen_baseline_SONYC_strong'
+experiment_name: '[8, 16, 24]_[1, 0.5,0]_16k_log+pcen_baseline_SONYC_strong_leakyrelu_0925'
 model_type: "CRNN" # para to determine which mode to be used (not test yet)
 training:
   train_on_fine_taxo: True
@@ -7,13 +7,13 @@ training:
   batch_size_val: 128  # try a small val then drop last - roll back to 128
   # supervised loss weights for [SGP_strong, SONYC_weak, SGP_weak]
   weight_loss_sup: [1, 0.5, 0.1] #[0, 1, 0] for system totally trained on SONYC
-  scheduler_type : "none"
+  scheduler_type : "rampup" # none or rampup
   const_max: 2 # max weight used for self supervised loss
-  n_steps_warmup: # num steps used for exponential warmup
+  n_steps_warmup: 1000 # num steps used for exponential warmup - not used if scheduler_type is none
   n_epochs_warmup: 30 # num epochs used for exponential warmup
   num_workers: 6 # change according to your cpu
   n_epochs: 220 # max num epochs
-  early_stop_patience: 60
+  early_stop_patience: 60 #30 for weak prediction
   accumulate_batches: 1
   gradient_clip: 0 # 0 no gradient clipping
   median_window: 7 # length of median filter used to smooth prediction in inference (nb of output frames)
@@ -60,11 +60,11 @@ transform:
 net:
   dropout: 0.4
   rnn_layers: 2
-  n_in_channel: 1
-  nclass: 15
+  n_in_channel: 2
+  nclass: 23
   attention: True
   n_RNN_cell: 128
-  activation: glu
+  activation: leakyrelu
   rnn_type: BGRU
   kernel_size: [3, 3, 3, 3, 3, 3, 3]
   padding: [1, 1, 1, 1, 1, 1, 1]

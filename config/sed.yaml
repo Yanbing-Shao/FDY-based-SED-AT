@@ -1,4 +1,4 @@
-experiment_name: '[8, 16, 24]_[1, 0.5,0]_log+_baseline_SGP_strong'
+experiment_name: '[8, 16, 24]_[1, 0.5,0]_32k_log+pcen_baseline_SONYC_strong_0921_comp_0919'
 model_type: "CRNN" # para to determine which mode to be used (not test yet)
 training:
   train_on_fine_taxo: True
@@ -47,8 +47,8 @@ features:
   sample_rate: 32000
   f_min: 0
   f_max: 16000
-  transform_type: log
-  pcen_trainable: False
+  transform_type: log+pcen
+  pcen_trainable: True
 
 transform:
   filter_db_range: [ -4.5, 6 ]       # db range of FilterAugment to be applied on each band
@@ -89,5 +89,5 @@ data:
   singa-pura_csv_val: "metadata/val/SINGA-PURA_val.csv"
   singa-pura_csv_test: "metadata/test/SINGA-PURA_test.csv"
   singa-pura_csv_unlabelled: "metadata/train/SINGA-PURA_unlabelled.csv"
-  taxonomy_path: "/home/tianzichen/SELDProjects/CoSMo/config/taxonomy_SINGA-PURA.yaml" #it seems that there's an taxonomy_SONYC.yaml file in config folder
+  taxonomy_path: "/home/tianzichen/SELDProjects/CoSMo/config/taxonomy_SONYC.yaml" #it seems that there's an taxonomy_SONYC.yaml file in config folder
 

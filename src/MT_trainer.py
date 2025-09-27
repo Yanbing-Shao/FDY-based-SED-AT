@@ -160,7 +160,7 @@ class CoSMo_benchmark(pl.LightningModule):
         self.scaler_pcen = self._init_scaler("pcen")
 
         # save hyperparameters
-        self.save_hyperparameters()
+        # self.save_hyperparameters()
 
     def get_MT_scaling_factor(self, exponent=-5.0):
         if self.rampup_len == 0:
