@@ -133,7 +133,7 @@ def single_run(
             bs.append(batch_sizes[0])
             weights = compute_weights(SINGAPURA_train_set)
             sampler = WeightedRandomSampler(
-                    weights, len(SINGAPURA_train_set), replacement=True
+                    weights, int(len(SINGAPURA_train_set) * 1.5), replacement=True
                 )
             samplers.append(sampler)
         if batch_sizes[1] > 0:
@@ -141,7 +141,7 @@ def single_run(
             bs.append(batch_sizes[1])
             weights = compute_weights(SONYC_train_set)
             sampler = WeightedRandomSampler(
-                    weights, len(SONYC_train_set), replacement=True
+                    weights, int(len(SONYC_train_set) * 1.5), replacement=True
                 )
             samplers.append(sampler)
         if batch_sizes[2] > 0:

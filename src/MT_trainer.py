@@ -118,6 +118,7 @@ class CoSMo_benchmark(pl.LightningModule):
             root=0.25,
             floor=1e-6,
             smooth_coef=0.02,  # i.e. T=800ms
+            per_channel_smooth_coef=feat_params["pcen_trainable"],
         )
 
         # If we learn the pcen parameters, we add them to the optimizer
@@ -879,7 +880,7 @@ class CoSMo_benchmark(pl.LightningModule):
             
                 # 添加固定参数
                 pcen_params.update({
-                    "per_channel": getattr(self.pcen, 'per_channel', False),
+                    # "per_channel": getattr(self.pcen, 'per_channel', False),
                     "input_size": getattr(self.pcen, 'input_size', self.hparams["features"]["n_mels"])
                 })
             
@@ -960,7 +961,7 @@ class CoSMo_benchmark(pl.LightningModule):
 
     def configure_optimizers(self):
         if self.hparams["features"]["pcen_trainable"] and self.opt is not None :
-            self.opt.add_param_group({"params": list(self.pcen.parameters())})
+            self.opt.add_param_group({"params": list(self.pcen.parameters()), "lr": self.hparams["opt"]["lr"] * self.hparams["opt"]["pcen_lr_coef"]})
         if self.scheduler is not None:
             return [self.opt], [{"scheduler": self.scheduler, "interval": "step"}]
         else:
@@ -1368,6 +1369,16 @@ class CoSMo_benchmark(pl.LightningModule):
             num_labels=num_classes,
             average="none",
         )
+        auprc_micro = torchmetrics.AUROC(
+            task="multilabel",
+            num_labels=num_classes,
+            average="micro",
+        )
+        auprc_macro = torchmetrics.AUROC(
+            task="multilabel",
+            num_labels=num_classes,
+            average="macro",
+        )
 
         label_ranking = torchmetrics.classification.MultilabelRankingAveragePrecision(
             num_labels=num_classes
@@ -1383,6 +1394,8 @@ class CoSMo_benchmark(pl.LightningModule):
                 "F1_score_macro": f1_macro,
                 "ap_micro": ap_micro,
                 "ap_macro": ap_macro,
+                "auprc_micro": auprc_micro,
+                "auprc_macro": auprc_macro,
                 "label_ranking": label_ranking,
             }
         )
